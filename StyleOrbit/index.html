@@ -1,0 +1,72 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StyleOrbit SIMS | Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./signin.css" />
+  </head>
+  <body>
+    <main class="auth-wrap">
+      <section class="auth-card auth-card-lite">
+        <section id="loginSection">
+          <form id="loginForm" class="auth-form lite-form" autocomplete="off">
+            <input name="email" type="text" placeholder="Please enter your Phone or Email" required />
+            <div class="password-wrap">
+              <input name="password" type="password" placeholder="Please enter your password" required />
+              <span class="eye-icon">◠</span>
+            </div>
+            <button type="submit" class="login-btn">LOGIN</button>
+          </form>
+          <button type="button" class="forgot-btn">Forgot password?</button>
+          <p class="signup-line">Don't have an account? <button id="showSignupBtn" type="button" class="link-btn">Sign up</button></p>
+        </section>
+
+        <section id="createSection" class="hidden">
+          <h2 class="auth-subtitle">Create Account</h2>
+          <form id="createAccountForm" class="auth-form lite-form" autocomplete="off">
+            <input name="name" type="text" placeholder="Enter full name" required />
+            <input name="email" type="email" placeholder="Enter email" required />
+            <input name="password" type="password" placeholder="Create password" required />
+            <select name="role" id="createRoleSelect" required>
+              <option value="user">User</option>
+              <option value="shop_owner">Shop Owner</option>
+            </select>
+            <div id="ownerDocFields" class="owner-doc-fields hidden">
+              <input name="panNumber" type="text" placeholder="PAN Number (required for owner)" />
+              <input name="vatNumber" type="text" placeholder="VAT Number (required for owner)" />
+              <input name="citizenshipNumber" type="text" placeholder="Citizenship Number (required for owner)" />
+              <input name="contactPhone" type="text" placeholder="Contact Phone (required for owner)" />
+              <input name="documentUrl" type="url" placeholder="Business document URL (required for owner)" />
+            </div>
+            <button type="submit" class="login-btn">CREATE ACCOUNT</button>
+          </form>
+          <p class="signup-line">Already have an account? <button id="showLoginBtn" type="button" class="link-btn">Login</button></p>
+          <p id="createStatusText" class="status"></p>
+        </section>
+
+        <div class="social-wrap">
+          <p class="social-title">Or, login with</p>
+          <div class="social-row">
+            <button id="googleLoginBtn" type="button" class="social-btn google">Google</button>
+          </div>
+        </div>
+
+        <button id="resetDemoBtn" type="button" class="auth-reset">Reset Demo Data</button>
+        <div class="demo-block">
+          <p><strong>Admin:</strong> admin@sims.com / admin123</p>
+          <p><strong>Owner:</strong> owner@sims.com / owner123</p>
+          <p><strong>User:</strong> user@sims.com / user123</p>
+        </div>
+
+        <p id="statusText" class="status"></p>
+      </section>
+    </main>
+
+    <script src="./shared.js"></script>
+    <script src="./auth.js"></script>
+  </body>
+</html>

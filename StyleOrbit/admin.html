@@ -1,0 +1,59 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StyleOrbit Admin</title>
+    <link rel="stylesheet" href="./admin.css" />
+  </head>
+  <body>
+    <header class="top">
+      <h1>StyleOrbit Admin</h1>
+      <div class="actions">
+        <span id="adminName"></span>
+        <button id="logoutBtn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="panel">
+        <h2>Approve / Reject Shops</h2>
+        <div id="pendingShopList" class="list"></div>
+      </section>
+
+      <section class="panel">
+        <h2>Create User</h2>
+        <form id="userForm" class="form" autocomplete="off">
+          <input name="name" placeholder="Full name" required />
+          <input name="email" type="email" placeholder="Email" required />
+          <input name="password" type="password" placeholder="Password" required />
+          <select name="role" required>
+            <option value="user">User</option>
+            <option value="shop_owner">Shop Owner</option>
+            <option value="admin">Admin</option>
+          </select>
+          <button type="submit">Create Account</button>
+        </form>
+        <p id="userStatus" class="status"></p>
+      </section>
+
+      <section class="panel full">
+        <h2>Manage Shop Listings (Remove Fake/Scam)</h2>
+        <div id="shopList" class="list"></div>
+      </section>
+
+      <section class="panel full">
+        <h2>Manage Users</h2>
+        <div id="userList" class="list"></div>
+      </section>
+
+      <section class="panel full">
+        <h2>Monitor System Activity</h2>
+        <div id="activityList" class="list"></div>
+      </section>
+    </main>
+
+    <script src="./shared.js"></script>
+    <script src="./admin.js"></script>
+  </body>
+</html>

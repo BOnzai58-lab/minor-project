@@ -1,0 +1,96 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StyleOrbit | Visitor/User</title>
+    <link rel="stylesheet" href="./user.css" />
+  </head>
+  <body>
+    <header class="top-header">
+      <div class="header-inner">
+        <div class="logo">StyleOrbit</div>
+        <div class="search-box">
+          <input id="searchInput" type="text" placeholder="Search shops or instagram ID" />
+          <button id="searchBtn" type="button">Search</button>
+        </div>
+        <div class="top-actions">
+          <span id="viewerName" class="viewer-name"></span>
+          <select id="categoryFilter">
+            <option value="all">All Categories</option>
+            <option value="clothes">Clothes</option>
+            <option value="accessories">Accessories</option>
+            <option value="beauty">Beauty</option>
+          </select>
+          <select id="sortFilter">
+            <option value="name_asc">Name: A to Z</option>
+            <option value="name_desc">Name: Z to A</option>
+            <option value="city_asc">City: A to Z</option>
+          </select>
+          <button id="favoritesOnlyBtn" type="button">Favorites</button>
+          <button id="logoutBtn" type="button">Logout</button>
+        </div>
+      </div>
+    </header>
+
+    <main class="container">
+      <h2>Browse Shops</h2>
+      <section id="shopGrid" class="shop-grid"></section>
+      <section id="emptyState" class="empty-state hidden">
+        <h3>No shops found</h3>
+        <p>Try another search or category.</p>
+      </section>
+    </main>
+
+    <template id="shopTemplate">
+      <article class="shop-card">
+        <img class="shop-image" alt="Shop" loading="lazy" />
+        <div class="insta-hover-preview" aria-hidden="true">
+          <div class="preview-head">
+            <span class="preview-back">←</span>
+            <p class="preview-handle"></p>
+            <span class="preview-menu">⋮</span>
+          </div>
+          <div class="preview-media">
+            <img class="preview-image" alt="Inside page preview" loading="lazy" />
+          </div>
+          <div class="preview-panel">
+            <p class="preview-caption"></p>
+            <p class="preview-stats"></p>
+            <a class="preview-follow" target="_blank" rel="noopener noreferrer">Follow on Instagram</a>
+          </div>
+        </div>
+        <h3 class="shop-title"></h3>
+        <p class="shop-meta"></p>
+        <p class="shop-insta"></p>
+        <div class="shop-actions">
+          <button class="fav-btn" type="button">Favorite</button>
+          <button class="details-btn" type="button">Details</button>
+          <a class="page-btn" target="_blank" rel="noopener noreferrer">Visit Shop Page</a>
+          <a class="visit-btn" target="_blank" rel="noopener noreferrer">Visit Instagram</a>
+        </div>
+        <div class="shop-details hidden">
+          <p class="shop-desc"></p>
+          <p class="shop-rating"></p>
+          <form class="review-form">
+            <label>
+              Rate
+              <select name="rating">
+                <option value="5">5</option>
+                <option value="4">4</option>
+                <option value="3">3</option>
+                <option value="2">2</option>
+                <option value="1">1</option>
+              </select>
+            </label>
+            <input name="comment" placeholder="Write review" />
+            <button type="submit">Submit Review</button>
+          </form>
+        </div>
+      </article>
+    </template>
+
+    <script src="./shared.js"></script>
+    <script src="./user.js"></script>
+  </body>
+</html>

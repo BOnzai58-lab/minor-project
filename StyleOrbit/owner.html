@@ -1,0 +1,67 @@
+﻿<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>StyleOrbit Owner</title>
+    <link rel="stylesheet" href="./owner.css" />
+  </head>
+  <body>
+    <header class="top">
+      <h1>Shop Owner Dashboard</h1>
+      <div class="actions">
+        <span id="ownerName"></span>
+        <button id="logoutBtn" type="button">Logout</button>
+      </div>
+    </header>
+
+    <main class="grid">
+      <section class="panel">
+        <h2>Register Shop</h2>
+        <form id="shopForm" class="form" autocomplete="off">
+          <input name="name" placeholder="Shop name" required />
+          <select name="category" required>
+            <option value="">Category</option>
+            <option value="clothes">Clothes</option>
+            <option value="accessories">Accessories</option>
+            <option value="beauty">Beauty</option>
+          </select>
+          <input name="legalOwnerName" placeholder="Legal Owner Name" required />
+          <input name="contactPhone" placeholder="Contact Phone" required />
+          <input name="panNumber" placeholder="PAN Number" />
+          <input name="vatNumber" placeholder="VAT Number" />
+          <input name="citizenshipNumber" placeholder="Citizenship Number" required />
+          <input name="documentUrl" placeholder="Document URL (https://...)" required />
+          <input name="city" placeholder="City" required />
+          <input name="instaId" placeholder="Instagram ID (without @)" required />
+          <input name="pageUrl" placeholder="Shop Page URL (https://...)" />
+          <input name="image" placeholder="Shop image URL" />
+          <textarea name="description" rows="3" placeholder="Short description"></textarea>
+          <button type="submit">Submit for Approval</button>
+        </form>
+        <p class="muted">Owner registration requires PAN or VAT, citizenship number, and supporting document URL.</p>
+        <p id="shopStatus" class="status"></p>
+      </section>
+
+      <section class="panel full">
+        <h2>My Shops</h2>
+        <p class="muted">You can edit only your own shop details.</p>
+        <div id="shopList" class="list"></div>
+      </section>
+
+      <section class="panel full">
+        <h2>Other Shops (Read Only)</h2>
+        <p class="muted">You can view basic listing info from other owners, but you cannot edit them.</p>
+        <div id="otherShopList" class="list"></div>
+      </section>
+
+      <section class="panel full">
+        <h2>Performance (Future)</h2>
+        <p class="muted">Shop analytics and conversion tracking will be added in a future version.</p>
+      </section>
+    </main>
+
+    <script src="./shared.js"></script>
+    <script src="./owner.js"></script>
+  </body>
+</html>
