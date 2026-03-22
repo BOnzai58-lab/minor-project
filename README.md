@@ -1,233 +1,350 @@
-# Smart Inventory Management System
+# Smart Inventory Management System (SIMS)
 
-A full-stack application for intelligent inventory management and demand forecasting.
+A production-style full-stack application for **inventory management + demand forecasting**.
 
----
+This project is built to help operations teams answer two practical questions every day:
 
-## Tools & Technologies Used
-
-- **Backend:**
-  - Python 3.9
-  - FastAPI
-  - XGBoost
-  - Pandas
-  - NumPy
-  - Scikit-learn
-  - Pydantic & pydantic-settings
-  - Joblib
-  - Requests
-  - Python-dotenv
-  - Uvicorn
-- **Frontend:**
-  - React
-  - Material-UI (MUI)
-  - @mui/x-date-pickers
-  - Chart.js & react-chartjs-2
-  - Axios
-- **DevOps & Deployment:**
-  - Docker
-  - Docker Compose
-  - Nginx (for serving frontend)
-- **Other:**
-  - Git & GitHub
-  - VSCode (recommended)
+1. **What do we currently have?** (stock, thresholds, transactions, product metadata)
+2. **What will we need next?** (daily/monthly/yearly demand forecasts with risk-aware recommendations)
 
 ---
 
-## Step-by-Step Setup & Development Process
+## Why This Project Exists
 
-### 1. Project Initialization
-- Set up project directories for backend and frontend.
-- Initialize git and create a `.gitignore` file.
+Most inventory tools stop at dashboards. Most ML demos stop at charts.
 
-### 2. Backend Setup
-- Created FastAPI app structure with modular directories (`api`, `core`, `models`, `services`, `utils`).
-- Added requirements in `backend/requirements.txt`.
-- Implemented configuration management with `pydantic-settings` and `.env` file support.
-- Built feature engineering pipeline (lag, rolling, categorical encoding, date features).
-- Implemented XGBoost model training, saving, and loading with feature name alignment.
-- Exposed REST API endpoints:
-  - `/api/predict` for demand prediction
-  - `/api/recommend` for stock recommendations
-  - `/api/train` for model training
-- Integrated WeatherAPI and Calendarific for live weather and festival data.
-- Added Dockerfile for backend containerization.
+SIMS combines both:
+- A usable inventory workflow (products, stock adjustments, threshold control, logs, audit)
+- Forecasting that considers business context (seasonality, weather, holidays, weekends, economic pressure)
 
-### 3. Frontend Setup
-- Bootstrapped React app with Material-UI and Chart.js for UI and visualization.
-- Built dashboard, prediction, and inventory management pages.
-- Implemented API service layer with Axios.
-- Ensured robust form handling and type conversion for API requests.
-- Added Dockerfile and Nginx config for production build.
-
-### 4. Data & Model
-- Used a CSV dataset for inventory, demand, weather, and festival simulation.
-- Ensured robust feature engineering and matching of features between training and prediction.
-- Saved model and feature names for consistent inference.
-
-### 5. Deployment
-- Wrote `docker-compose.yml` to orchestrate backend and frontend containers.
-- Used volume mounts for data/model persistence.
-- Provided environment variable support for API keys.
-
-### 6. Testing & Debugging
-- Used FastAPI docs (`/docs`) for API testing.
-- Handled common errors: feature mismatch, data types, missing model, etc.
-- Ensured frontend displays prediction results correctly and handles errors.
-
-### 7. Version Control
-- Used git for source control.
-- Added `.gitignore` to exclude unnecessary files and large data/model files.
-- Provided instructions for pushing to GitHub.
+Result: operations and analytics in one system.
 
 ---
 
-## For detailed setup, see the sections below in this README.
+## What SIMS Delivers
 
-If you need a more granular breakdown or want to add more details, let me know!
+### 1) Inventory Management (Operational Layer)
+- Product catalog management (name, code/ID, category, unit price, shelf life)
+- Region-wise stock records
+- Stock increment/decrement transactions
+- Restock threshold updates
+- Full stock transaction history
+- Admin auth log monitoring
 
-## Features
+### 2) Forecasting & Decision Support (Intelligence Layer)
+- Demand prediction with multiple horizons:
+  - `daily`
+  - `monthly`
+  - `yearly`
+- Uses external and temporal factors:
+  - Temperature
+  - Seasons
+  - Holidays
+  - Festivals
+  - Weekends
+  - Economic index
+- Risk-based recommendation output:
+  - `Restock`
+  - `Overstock`
+  - `Stock OK`
 
-- Demand forecasting using XGBoost
-- Real-time inventory recommendations
-- Interactive dashboard with visualizations
-- Weather and festival impact analysis
-- Responsive web interface
+### 3) Training Pipeline
+- Training window uses **last 365 days** (latest year of data)
+- Model training from UI (admin panel)
+- Model metrics and charts exposed after training
+
+---
+
+## Primary and Secondary Models
+
+### Primary models
+- Linear Regression
+- Ridge Regression
+- Lasso Regression
+- XGBoost
+
+### Non-primary models
+- Decision Tree Regressor
+- Random Forest Regressor
+- LSTM-style neural fallback (implemented as a neural surrogate in current sklearn stack)
+
+> Note: In this codebase, the LSTM slot is served by a neural regressor (`MLPRegressor`) to keep deployment simple in the existing dependency profile.
+
+---
 
 ## Tech Stack
 
 ### Backend
-- Python 3.9
+- Python 3.9+
 - FastAPI
+- SQLAlchemy
+- PostgreSQL (Docker) / SQLite fallback option in config
+- scikit-learn
 - XGBoost
-- Pandas
-- Scikit-learn
+- Pandas, NumPy
+- Joblib
+- python-jose (JWT)
+- passlib+bcrypt (password hashing)
 
 ### Frontend
-- React
-- Material-UI
-- Chart.js
+- React 18
+- MUI (Material UI)
+- MUI DataGrid
+- Chart.js + react-chartjs-2
 - Axios
+- react-router-dom
 
-## Prerequisites
+### Deployment / Runtime
+- Docker
+- Docker Compose
+- Nginx (frontend serving + API proxy)
 
-- Docker and Docker Compose
-- Python 3.9+ (for local development)
-- Node.js 16+ (for local development)
-- API keys for:
-  - WeatherAPI
-  - Calendarific
+### External Data Providers
+- WeatherAPI (primary weather)
+- Open-Meteo (weather fallback)
+- Calendarific (festival/holiday context)
 
-## Setup
+---
 
-1. Clone the repository:
-```bash
-git clone <repository-url>
-cd smart-inventory-management
+## High-Level Architecture
+
+```text
+React Frontend  --->  FastAPI Backend  --->  PostgreSQL
+       |                     |                  |
+       |                     |                  +-- users/products/inventory/logs
+       |                     |
+       |                     +-- ML service (train + predict)
+       |                     +-- CSV dataset ingestion
+       |                     +-- model artifacts (.joblib/.columns/.meta)
+       |                     +-- weather + calendar integrations
+       |
+       +-- dashboards, forms, admin workflows, forecasting UX
 ```
 
-2. Create a `.env` file in the root directory:
-```bash
+---
+
+## Repository Structure
+
+```text
+Backend/
+  app/
+    api/            # Route layer and auth dependencies
+    core/           # Settings / config
+    db/             # DB engine, models, startup seeding/migration
+    data/           # Dataset CSV
+    models/         # Pydantic schemas + persisted model artifacts
+    services/       # Auth, model, feature engineering, weather, calendar
+
+frontend/
+  src/
+    components/     # Layout and route protection
+    context/        # Auth state provider
+    pages/          # Login, Dashboard, Inventory, Predictions, AdminPanel
+    services/       # API client wrappers
+  nginx.conf        # Frontend serving + API reverse proxy
+
+docker-compose.yml  # Full stack orchestration
+README.md
+```
+
+---
+
+## Core Business Data Model
+
+### Product
+- `name`
+- `product_code` (ID/code)
+- `category`
+- `unit_price_npr`
+- `shelf_life_days`
+- `is_active`
+
+### InventoryItem
+- `product_id`
+- `region`
+- `current_stock`
+- `restock_threshold`
+
+### StockTransaction
+- `product_id`, `region`
+- `quantity_delta`
+- `previous_stock`, `new_stock`
+- `reason`, `notes`
+- `performed_by_user_id`
+
+### User / AuthLog
+- role-based access (`admin`, `user`)
+- login attempt auditing
+
+---
+
+## External Factors Used in Forecasting
+
+Forecast input can include:
+- `temp_c`
+- `season`
+- `is_holiday`
+- `is_festival`
+- `is_weekend`
+- `economic_index`
+
+If some fields are not provided:
+- weather is fetched from provider
+- holiday/festival is inferred from calendar API
+- season/weekend/economic defaults are generated from date context
+
+---
+
+## API Reference (SIMS)
+
+All APIs are prefixed by `/api`.
+
+### Auth
+- `POST /auth/register`
+- `POST /auth/login`
+- `GET /auth/me`
+
+### Forecasting and Insights
+- `POST /predict` (supports `daily`, `monthly`, `yearly` + `periods`)
+- `GET /recommend`
+- `GET /metadata`
+- `GET /weather`
+- `GET /calendar`
+
+### Model Management
+- `POST /train` (admin)
+- `GET /train/options` (admin)
+
+### Inventory + Product Management
+- `GET /products`
+- `POST /products` (admin)
+- `GET /inventory/records`
+- `POST /inventory/adjust` (admin)
+- `GET /inventory/transactions` (admin)
+
+### Admin Management / Audit
+- `GET /admin/users` (admin)
+- `POST /admin/users` (admin)
+- `GET /admin/auth-logs` (admin)
+
+---
+
+## Frontend Pages and Purpose
+
+- **Login**: authentication and account onboarding
+- **Dashboard**: KPI monitoring, demand trends, weather insights
+- **Predictions**: configurable forecasting (daily/monthly/yearly, custom factors)
+- **Inventory**: risk table and action prioritization
+- **Admin Panel**: users/products/stock operations + model training
+
+---
+
+## Run with Docker (Recommended)
+
+### Prerequisites
+- Docker
+- Docker Compose
+
+### 1) Configure environment
+Create `.env` in project root:
+
+```env
 WEATHERAPI_KEY=your_weatherapi_key
 CALENDARIFIC_API_KEY=your_calendarific_api_key
+SECRET_KEY=your_secret_key
 ```
 
-3. Place the dataset file:
-```bash
-cp path/to/your/dataset.csv backend/app/data/smart_inventory_stock_dataset.csv
-```
-
-4. Build and run with Docker Compose:
+### 2) Start stack
 ```bash
 docker-compose up --build
 ```
 
-The application will be available at:
-- Frontend: http://localhost
-- Backend API: http://localhost:8000
-- API Documentation: http://localhost:8000/docs
+### 3) Open
+- Frontend: `http://localhost`
+- Backend API: `http://localhost:8000`
+- Swagger docs: `http://localhost:8000/docs`
 
-## Development
+---
 
-### Backend Development
+## Run Locally (Development)
 
-1. Create a virtual environment:
+### Backend
 ```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-2. Install dependencies:
-```bash
+cd Backend
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# Linux/macOS
+# source .venv/bin/activate
 pip install -r requirements.txt
-```
-
-3. Run the development server:
-```bash
 uvicorn app.main:app --reload
 ```
 
-### Frontend Development
-
-1. Install dependencies:
+### Frontend
 ```bash
 cd frontend
 npm install
-```
-
-2. Start the development server:
-```bash
 npm start
 ```
 
-## API Endpoints
+Frontend dev server runs at `http://localhost:3000` by default.
 
-- `POST /api/predict`: Get demand prediction
-- `GET /api/recommend`: Get inventory recommendations
-- `POST /api/train`: Train the forecasting model
+---
 
-## Testing
+## Typical Workflow (Admin)
 
-### Backend Tests
-```bash
-cd backend
-pytest
-```
+1. Login as admin
+2. Create products with metadata (code, category, price, shelf life)
+3. Adjust inventory and restock thresholds by region
+4. Train model (choose primary/non-primary algorithm)
+5. Validate metrics and charts
+6. Use Inventory and Predictions pages for daily operations and planning
 
-### Frontend Tests
-```bash
-cd frontend
-npm test
-```
+---
 
-## Deployment
+## Typical Workflow (Operations/User)
 
-The application is containerized and can be deployed to any cloud platform that supports Docker:
+1. Login
+2. Monitor low-stock and overstock risks in Inventory
+3. Run horizon-specific forecast from Predictions
+4. Use recommendation output to plan purchase/replenishment
 
-1. Build the images:
-```bash
-docker-compose build
-```
+---
 
-2. Push to your container registry:
-```bash
-docker tag smart-inventory-management_backend your-registry/backend:latest
-docker tag smart-inventory-management_frontend your-registry/frontend:latest
-docker push your-registry/backend:latest
-docker push your-registry/frontend:latest
-```
+## Current Notes
 
-3. Deploy to your cloud platform using the provided docker-compose.yml
+- Dataset normalization supports both native inventory schema and Walmart-style sample schema.
+- Weather and holiday calls fail gracefully; system uses defaults when APIs are unavailable.
+- Forecasting returns both a summary and per-period forecast points.
 
-## Contributing
+---
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit your changes
-4. Push to the branch
-5. Create a Pull Request
+## Security and Access
+
+- JWT-based authentication
+- Role-based authorization
+- Password hashing with bcrypt
+- Admin-only controls for training and master data writes
+
+---
+
+## Future Enhancements
+
+- Native deep learning LSTM training pipeline
+- Automated retraining scheduler
+- Multi-warehouse balancing optimization
+- Vendor lead-time aware replenishment planning
+- Cost/profit simulation on forecast outputs
+
+---
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details. 
+This repository currently does not include a formal license file.
+Add one (e.g., MIT/Apache-2.0) before public redistribution.
+
+---
+
+## Authoring Note
+
+This README is intentionally written in a practical, human-readable format so both technical and non-technical stakeholders can understand how SIMS is built, why it exists, and how to operate it end-to-end.
