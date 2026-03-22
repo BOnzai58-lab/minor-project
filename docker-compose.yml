@@ -1,0 +1,40 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=smart_inventory
+      - POSTGRES_USER=smart_user
+      - POSTGRES_PASSWORD=smart_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  backend:
+    build: ./Backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Backend/app/data:/app/app/data
+      - ./Backend/app/models:/app/app/models
+    environment:
+      - WEATHERAPI_KEY=${WEATHERAPI_KEY}
+      - CALENDARIFIC_API_KEY=${CALENDARIFIC_API_KEY}
+      - DATABASE_URL=postgresql+psycopg2://smart_user:smart_password@postgres:5432/smart_inventory
+      - SECRET_KEY=${SECRET_KEY:-prototype-secret-key}
+      - ACCESS_TOKEN_EXPIRE_MINUTES=120
+    depends_on:
+      - postgres
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    environment:
+      - REACT_APP_API_BASE_URL=http://localhost:8000/api
+
+volumes:
+  pgdata:

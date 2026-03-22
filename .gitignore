@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.env
+.env
+*.sqlite3
+
+# Jupyter
+.ipynb_checkpoints
+
+# VSCode
+.vscode/
+
+# Node
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Build
+build/
+dist/
+*.egg-info/
+
+# Docker
+*.log
+*.pid
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Models and data (optional, if you don't want to push large files)
+backend/app/models/*.joblib
+backend/app/data/*.csv 
